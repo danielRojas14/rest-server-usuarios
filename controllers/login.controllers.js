@@ -1,22 +1,19 @@
 const ctrlLogin = {}
-const { validationResult } = require("express-validator");
+const bcryptjs = require('bcryptjs');
 const usuarios = require('../models/usuarios');
 const {generarJwt} = require('../helpers/generarJwt')
-require('dotenv').config();
+
 
 
 ctrlLogin.verificarUsuario = async (req, res) => {
 
-    const {gmail, password} = req.body;
+    const {gmail, password, ...datos} = req.body;
 
     try{
 
-        const filtrarUsuario = await usuarios.find({
-            gmail: gmail,
-            password: password,
-        })
+        const filtrarUsuario = await usuarios.findOne({gmail})
 
-        if (filtrarUsuario.length == 0) {
+        if (!filtrarUsuario) {
 
             return  res.status(401).json({
                 msg:'No se encontro ningun usuario con esos datos'
@@ -24,11 +21,28 @@ ctrlLogin.verificarUsuario = async (req, res) => {
             
         }
 
-        const id = filtrarUsuario[0]._id.toString();
+        if (!filtrarUsuario.estado) {
 
-        const devolverToken = await generarJwt(id)
-        res.status(200).json({
-            devolverToken;
+            return  res.status(401).json({
+                msg:'No se encontro ningun usuario con esos datos'
+            });
+            
+        }
+
+        const compararPassword = bcryptjs.compareSync(password, filtrarUsuario.password);
+
+        if (!compararPassword) {
+            return res.status(401).json({
+                msg: 'No se encontro ningun usuario con esos datos'
+            })
+        }
+
+
+
+        const devolverToken = await generarJwt(filtrarUsuario.id)
+        
+        return res.status(200).json({
+            devolverToken
         })
 
     }catch (error){

@@ -1,6 +1,23 @@
 const router = require("express").Router();
 
-const{ validarRegistro } = require('../middleware/validarRegistro')
+const { validarJWT } = require('../middleware/validarJwt');
+
+
+
+const {
+  validarRolListarUsuarios,
+  validarRolCrearUsuario,
+  validarRoleActualUsuario,
+  validarRolBorrarUsuario,
+} = require("../middleware/validarRoles");
+
+const {
+  validacionesCamposObtenerUnUsuario,
+  validacionesCamposCrearUsuario,
+  validacionesCamposModificarUsuario,
+  validacionesCamposBorrarUsuario,
+  validarCamposUsuarios,
+} = require("../middleware/validarCampos");
 
 const {
   rutaGet,
@@ -10,13 +27,32 @@ const {
 } = require("../controllers/usuarios.controllers");
 
 //  Ruta que devuelve todos las notas
-router.get("/", rutaGet);
+router.get("/listarUsuarios",[
+  validarJWT,
+  validarRolListarUsuarios,
+  validacionesCamposObtenerUnUsuario],
+ rutaGet);
 
-router.post("/", validarRegistro, rutaPost);
+router.post("/agregarUsuarios",[
+  validarJWT,
+  validarRolCrearUsuario,
+  validacionesCamposCrearUsuario,
+  validarCamposUsuarios],
+   rutaPost);
 
 // Actualizar las notas
-router.put("/", rutaPut);
+router.put("/modificarUsuarios/:id",[
+  validarJWT,
+  validarRoleActualUsuario,
+  validacionesCamposModificarUsuario,
+  validarCamposUsuarios],
+ rutaPut);
 
-router.put("/deleteUsuarios", deleteUsuario);
+router.put("/deleteUsuarios/:id",[
+  validarJWT,
+  validarRolBorrarUsuario,
+  validacionesCamposBorrarUsuario,
+  validarCamposUsuarios]
+,deleteUsuario);
 
 module.exports = router;
