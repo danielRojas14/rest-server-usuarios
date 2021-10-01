@@ -13,19 +13,19 @@ ctrlHome.rutaGet = async (req, res) => {
 }catch(err){
   res.status(401).json({ msg: "ocurrio un error al listar a los usuarios", err });
 }
-
+}
 // Controlador que almacena un nuevo usuario
 ctrlHome.rutaPost = async (req, res) => {
-  const {nombreUsu, password} = req.body;
+  const {gmail, password, rol} = req.body;
   
   try{
 
   const usuarioInsert = new usuario({
-    nombreUsu,
+    gmail,
     password,
-    estado: true });
+    rol,})
 
-    const alt = bcryptjs.genSaltSync();
+    const salt = bcryptjs.genSaltSync();
 
     usuarioInsert.password = bcryptjs.hashSync(password, salt);
 
@@ -43,26 +43,28 @@ ctrlHome.rutaPost = async (req, res) => {
 ctrlHome.rutaPut = async (req, res) => {
 
   const {id} = req.params;
-  const {gmail,password, rol, ...datos} = req.body;
-
+  const {gmail,password, rol} = req.body;
+// console.log(datos);
   try{
 
     if (password) {
       const salt = bcryptjs.genSaltSync();
-      datos.password = bcryptjs.hashSync(password, salt)
+      passwordBcrypt = bcryptjs.hashSync(password, salt)
     }
 
-  const usuariosModificar = await usuario.findByIdAndUpdate({
+  const usuariosModificar = await usuario.findByIdAndUpdate(id, {
     gmail,
-    password: datos.password,
-    role
-   });
+  password: passwordBcrypt,
+    rol,
+    
+   },{ new: true });
 
   res.status(200).json({
     msg: "usuario actualizado correctamente",
-    usuarios,
+    usuariosModificar,
   });
 }catch(err){
+  
   res.status(401).json({ msg: "ocurrio un error al modificar el usuario", err });
 }
 }
@@ -74,7 +76,7 @@ ctrlHome.deleteUsuario = async (req, res) => {
 
   const usuarios = await usuario.findByIdAndUpdate(
     id,
-    { estado: false },
+    { estado: false },{new:true}
   );
 
   // Respuesta del servidor
@@ -89,6 +91,6 @@ return res.status(401).json({
 })
 }
 }
-}
+
 
 module.exports = ctrlHome;

@@ -9,6 +9,8 @@ ctrlLogin.verificarUsuario = async (req, res) => {
 
     const {gmail, password, ...datos} = req.body;
 
+    console.log(gmail, password);
+
     try{
 
         const filtrarUsuario = await usuarios.findOne({gmail})
@@ -16,7 +18,7 @@ ctrlLogin.verificarUsuario = async (req, res) => {
         if (!filtrarUsuario) {
 
             return  res.status(401).json({
-                msg:'No se encontro ningun usuario con esos datos'
+                msg:'No se encontro ningun usuario con esos datos - usuario no encontrado'
             });
             
         }
@@ -24,7 +26,7 @@ ctrlLogin.verificarUsuario = async (req, res) => {
         if (!filtrarUsuario.estado) {
 
             return  res.status(401).json({
-                msg:'No se encontro ningun usuario con esos datos'
+                msg:'No se encontro ningun usuario con esos datos - usuario no activo'
             });
             
         }
@@ -33,7 +35,7 @@ ctrlLogin.verificarUsuario = async (req, res) => {
 
         if (!compararPassword) {
             return res.status(401).json({
-                msg: 'No se encontro ningun usuario con esos datos'
+                msg: 'No se encontro ningun usuario con esos datos - contraseña equivocada'
             })
         }
 
@@ -46,6 +48,7 @@ ctrlLogin.verificarUsuario = async (req, res) => {
         })
 
     }catch (error){
+        console.log(error);
         return res.status(500).json({
             msg:'Ha ocurrido un error en el servidor'
 

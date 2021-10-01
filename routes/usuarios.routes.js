@@ -7,14 +7,14 @@ const { validarJWT } = require('../middleware/validarJwt');
 const {
   validarRolListarUsuarios,
   validarRolCrearUsuario,
-  validarRoleActualUsuario,
+  validarRolActualUsuario,
   validarRolBorrarUsuario,
 } = require("../middleware/validarRoles");
 
 const {
   validacionesCamposObtenerUnUsuario,
   validacionesCamposCrearUsuario,
-  validacionesCamposModificarUsuario,
+  validacionesCamposActualUsuario,
   validacionesCamposBorrarUsuario,
   validarCamposUsuarios,
 } = require("../middleware/validarCampos");
@@ -36,22 +36,23 @@ router.get("/listarUsuarios",[
 router.post("/agregarUsuarios",[
   validarJWT,
   validarRolCrearUsuario,
-  validacionesCamposCrearUsuario,
+  validacionesCamposCrearUsuario(),
   validarCamposUsuarios],
    rutaPost);
 
 // Actualizar las notas
 router.put("/modificarUsuarios/:id",[
   validarJWT,
-  validarRoleActualUsuario,
-  validacionesCamposModificarUsuario,
-  validarCamposUsuarios],
- rutaPut);
+  validarRolActualUsuario,
+  validacionesCamposActualUsuario(),
+  validarCamposUsuarios
+],
+rutaPut);
 
 router.put("/deleteUsuarios/:id",[
   validarJWT,
   validarRolBorrarUsuario,
-  validacionesCamposBorrarUsuario,
+  validacionesCamposBorrarUsuario(),
   validarCamposUsuarios]
 ,deleteUsuario);
 

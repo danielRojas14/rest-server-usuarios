@@ -1,5 +1,8 @@
 const router = require('express').Router();
-const {verificarUsuario} = reuqire('../controllers/login.controllers');
+const {verificarUsuario} = require('../controllers/login.controllers');
 
 
 router.post('/verificar', verificarUsuario)
+
+
+module.exports = router;

@@ -1,6 +1,6 @@
 
 const { check, validationResult } = require("express-validator");
-const {rolValido, existeUsuario} = require('../helpers/validacionExiste')
+const {esActivo, existeUsuario, existeEmail} = require('../helpers/validacionExiste')
 
 const validarCampos = {};
 
@@ -17,25 +17,23 @@ validarCampos.validacionesCamposObtenerUnUsuario = () => {
 //Se retorna los campos a validar para la ruta de crear un usuario
 validarCampos.validacionesCamposCrearUsuario = () => {
   return [
-    check("email", "El  formato del email es incorrecto")
+    check("gmail", "El  formato del email es incorrecto")
       .isEmail()
       .trim()
-      .escape(),
-      check('gmail')
+      .escape()
     .custom(existeEmail),
     check("password", "El formato del password incorrecto")
       .trim()
       .escape()
       .isLength({ min: 8 }),
-    check("rol")
-    .custom(rolValido),
+    
   ];
 };
 
 // Se retorna los campos a validar para la ruta de actualizar un usuario
 validarCampos.validacionesCamposActualUsuario = () => {
   return [
-    check("email", "El email enviado tiene un formato incorrecto")
+    check("gmail", "El email enviado tiene un formato incorrecto")
       .isEmail()
       .trim()
       .escape(),
@@ -43,13 +41,11 @@ validarCampos.validacionesCamposActualUsuario = () => {
       .trim()
       .escape()
       .isLength({ min: 8 }),
-    check("rol", "El role enviado tiene un formato incorrecto")
-    .custom(rolValido),
+
     check("id", "El id enviado no tiene un formato valido")
       .isMongoId()
       .trim()
-      .escape(),
-      check('id')
+      .escape()
       .custom(existeUsuario),
   ];
 };
@@ -60,14 +56,12 @@ validarCampos.validacionesCamposBorrarUsuario = () => {
     check(
       "activo",
       "Error invalido para el estado, solo puede enviar true o false"
-    ).custom((estado) => {
-      return ["true", "false"].includes(estado);
-    }),
+    ).custom(esActivo),
     check("id", "El id enviado no tiene un formato valido")
       .isMongoId()
       .trim()
-      .escape(),
-      check('id').custom(existeUsuario),
+      .escape()
+      .custom(existeUsuario),
   ];
 };
 

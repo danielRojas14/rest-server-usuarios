@@ -5,7 +5,9 @@ const jwt = require('jsonwebtoken');
 
 const validarJWT = async (req, res, next) =>{
 
-    const token = req.header();
+    const token = req.headers.token;
+
+    // console.log(token);
 
     if (!token) {
         return res.status(401).json({
@@ -14,9 +16,10 @@ const validarJWT = async (req, res, next) =>{
     }
 
     try{
-        const { uid } = jwt.verify(token, process.env.PRIVATE_KEY)
+        const  {id}  = jwt.verify(token, process.env.PRIVATE_KEY)
+        // console.log(id);
         
-        const Usuario = await usuario.findById(uid);
+        const Usuario = await usuario.findById(id);
         
         if (!Usuario) {
             return res.status(401).json({
@@ -36,7 +39,7 @@ const validarJWT = async (req, res, next) =>{
         next();
     
     }catch(err){
-
+console.log(err);
         return res.status(401).json({
             msg:'Error al verificar token'
         })

@@ -1,13 +1,13 @@
 const jsonWebToken = require('jsonwebtoken');
 
 
-const generarJwt = (id) =>{
+const  generarJwt =  (id) =>{
 
 const payload = { id };
 
 return new Promise((resolve, reject) =>{
 
-    jsonWebToken.sing(payload, process.env.PRIVATE_KEY, (err,token) =>{
+    jsonWebToken.sign(payload, process.env.PRIVATE_KEY, (err,token) =>{
 
         if (err){
             reject('No se pudo crear el token'); 
